@@ -1,6 +1,6 @@
 # Symptoms Checker Bot
 
-[MedTech Chatbot](https://medtecbot-3ryovtid4tji5trsty4hte.streamlit.app/)
+[Symptom Checker Bot](https://medtecbot-3ryovtid4tji5trsty4hte.streamlit.app/)
 
 
 ## Overview
