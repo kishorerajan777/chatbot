@@ -1,6 +1,6 @@
 # Symptoms Checker Bot
 
-![Bot Banner](https://medtecbot-3ryovtid4tji5trsty4hte.streamlit.app/)
+![Streamlit Link](https://medtecbot-3ryovtid4tji5trsty4hte.streamlit.app/)
 
 ## Overview
 
