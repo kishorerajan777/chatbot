@@ -49,16 +49,12 @@ The main goals of this project are to:
 2.**Create and activate a virtual environment (optional but recommended):**
 
 bash
-Copy
-Edit
 python -m venv venv
 source venv/bin/activate    # On Windows: venv\Scripts\activate
 
 3.**Install dependencies:**
 
 bash
-Copy
-Edit
 pip install -r requirements.txt
 Ensure your requirements.txt includes: streamlit, pandas, plotly, etc.
 
@@ -83,15 +79,13 @@ The bot will return the symptoms, description, and the number of matched symptom
 
 Precaution Query: Type:
 
-css
-Copy
-Edit
 I want precaution of kidney stones
 to get preventive measures.
 
 Visualization: After entering at least three symptoms, additional buttons will appear:
 
 "📊 See Matched Symptom Counts for Top 3 Diseases" – displays a bar chart of matched symptom counts.
+
 "📊 See Symptom Severity Chart" – displays a bar chart of the severity levels of the symptoms.
 
 Example Input:
@@ -102,9 +96,13 @@ The bot will list the top 3 possible diseases and, upon clicking the visualizati
 **Project Demonstration Guide**
 
 Step 1: Launch the app using the Streamlit command.
+
 Step 2: In the chat interface, type your query (e.g., "what are the symptoms of AIDS" or "I have thyroid disorder").
+
 Step 3: Review the bot's response with the predicted diseases, descriptions, and matched symptom counts.
+
 Step 4: When additional buttons appear, click the visualization button(s) to view:
+
 A bar chart showing the matched symptom counts for the top 3 predicted diseases.
 A bar chart displaying the severity levels of the user-entered symptoms.
 Step 5: Use the charts to better understand the symptom distribution and severity.
