@@ -5,7 +5,7 @@ import time
 import plotly.express as px  
 
 # Load dataset
-file_path = "updated_target.csv"
+file_path = "Diseases.csv"
 df = pd.read_csv(file_path)
 
 # Ensure required columns exist
