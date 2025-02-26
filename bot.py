@@ -36,7 +36,7 @@ for key in session_keys:
 
 # Chatbot Title with Typewriter Effect
 title_placeholder = st.empty()
-title_text = "🩺 Hi, I am Medtech Chatbot"
+title_text = "🩺 Hi, I am Symptom Checker Chatbot"
 display_text = ""
 
 for char in title_text:
