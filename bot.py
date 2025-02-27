@@ -109,6 +109,10 @@ if user_input:
             response = "⚠️ Disease not found in database. Please check the name and try again."
         
     # **If user enters symptoms, find matching diseases**
+
+
+
+    # **If user enters symptoms, find matching diseases**w
     else:
         user_symptoms = set(re.findall(r'\w+', user_input.lower()))
         df["MatchCount"] = df["Symptoms"].apply(lambda x: len(set(re.findall(r'\w+', x)).intersection(user_symptoms)))
@@ -120,16 +124,22 @@ if user_input:
             st.session_state.disease_matches = disease_matches.to_dict("records")  # Store matches for chart
 
             for _, row in disease_matches.iterrows():
-                response += f"\n🔹 **{row['Disease'].capitalize()}**\n"
-                response += f"\n📖 **Description:** {row.get('Description', 'No description available')}\n"
-                response += "\n🤒 **Symptoms:**\n" + "\n".join([f"🔹 {s.strip()}" for s in row["Symptoms"].split(",")])
-                response += f"\n🔹 **Matched Symptoms Count:** {row['MatchCount']}\n"
+                response += f"\n🔹 **{row['Disease'].capitalize()}**\n\n"
+                response += f"\n📖 **Description:** {row.get('Description', 'No description available')}\n\n"
+                response += "\n🤒 **Symptoms:**\n\n"
+                # Display each symptom on a new line
+                for symptom in row["Symptoms"].split(","):
+                    response += f"🔹 {symptom.strip()}\n\n"
+                # Display matched symptoms count on a new line
+                response += f"\n\n🔹 **Matched Symptoms Count:**\n{row['MatchCount']}\n"
+                response += "\n\n"  # Add a new line for spacing
 
             st.session_state.show_chart = True  
         else:
             response = "⚠️ No matching disease found. Please check the symptoms or try rephrasing."
 
-    # Display chatbot response with typing effect
+    
+        # Display chatbot response with typing effect
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             time.sleep(2)
