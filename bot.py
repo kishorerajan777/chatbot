@@ -61,7 +61,7 @@ if user_input:
 
     # Keywords for different queries
     precaution_keywords = ["precaution", "how to prevent", "prevent", "safety", "what should i do"]
-    symptom_keywords = ["what are the symptoms", "symptoms of","i have"]
+    symptom_keywords = ["what are the symptoms", "symptoms of", "i have"]
 
     # Process user input
     user_input_cleaned = re.sub(r'[^a-zA-Z ]', '', user_input).strip().lower()
@@ -82,24 +82,14 @@ if user_input:
             if disease in disease_asked:
                 found = True
                 precautions = row.get('Precautions', 'No precautions found').split(';')  
-                response = f"**🛡️ Precautions for {row['Disease']}:**\n" + "\n".join([f"✅ {p.strip()}" for p in precautions])
+                response = f"**🛡️ Precautions for {row['Disease'].capitalize()}:**\n" + "\n".join([f"✅ {p.strip()}" for p in precautions])
                 break
         
         if not found:
             response = "⚠️ Disease not found in database. Please check the name and try again."
 
-
-
-    # If user enters new input, clear previous charts
-    if "user_input" in st.session_state and user_input.strip() != st.session_state.user_input:
-        st.session_state.show_severity_chart = False
-        st.session_state.show_matched_chart = False
-
-    st.session_state.user_input = user_input.strip()  # Store latest input
-    
-    
     # Check if user asks for **symptoms**
-    if any(keyword in user_input.lower() for keyword in symptom_keywords):
+    elif any(keyword in user_input.lower() for keyword in symptom_keywords):
         disease_asked = user_input_cleaned.lower()
 
         found = False
@@ -118,7 +108,6 @@ if user_input:
         if not found:
             response = "⚠️ Disease not found in database. Please check the name and try again."
         
-    # **If user enters symptoms, find matching diseases**
     # **If user enters symptoms, find matching diseases**
     else:
         user_symptoms = set(re.findall(r'\w+', user_input.lower()))
@@ -140,7 +129,6 @@ if user_input:
         else:
             response = "⚠️ No matching disease found. Please check the symptoms or try rephrasing."
 
-
     # Display chatbot response with typing effect
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
@@ -153,9 +141,6 @@ if user_input:
                 time.sleep(0.05)
 
     st.session_state.messages.append({"role": "assistant", "content": response})
-
-
-
 
 #-----------------------------------------------   BARCHART VISUALS  -----------------------------------------------------------------#
 
