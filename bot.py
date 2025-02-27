@@ -67,7 +67,7 @@ if user_input:
 user_input_cleaned = re.sub(r'[^a-zA-Z ]', '', str(user_input)).strip().lower()
 
 # If the query contains "this disease", override with the last predicted disease
-if "this disease" in user_input.strip().lower() or "this" in user_input.strip().lower():
+if "this disease" in str(user_input).lower() or "this" in str(user_input).lower():
     user_input_cleaned = st.session_state.last_disease or ""
 
 # Check if the user is asking for precautions
