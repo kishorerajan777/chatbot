@@ -71,7 +71,7 @@ if "this disease" in str(user_input).lower() or "this" in str(user_input).lower(
     user_input_cleaned = st.session_state.last_disease or ""
 
 # Check if the user is asking for precautions
-if any(keyword in user_input.lower() for keyword in precaution_keywords):
+if any(keyword in str(user_input).lower() for keyword in precaution_keywords):
     disease_asked = user_input_cleaned.lower()
 
     # If the query indicates "this disease", use last predicted disease
