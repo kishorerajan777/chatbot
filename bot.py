@@ -64,7 +64,8 @@ if user_input:
     symptom_keywords = ["what are the symptoms", "symptoms of","i have"]
 
    # Process user input and clean it
-user_input_cleaned = re.sub(r'[^a-zA-Z ]', '', user_input).strip().lower()
+user_input_cleaned = re.sub(r'[^a-zA-Z ]', '', str(user_input)).strip().lower()
+
 # If the query contains "this disease", override with the last predicted disease
 if "this disease" in user_input.lower() or "this" in user_input.lower():
     user_input_cleaned = st.session_state.last_disease or ""
