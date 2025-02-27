@@ -63,59 +63,51 @@ if user_input:
     precaution_keywords = ["precaution", "how to prevent", "prevent", "safety", "what should i do"]
     symptom_keywords = ["what are the symptoms", "symptoms of","i have"]
 
-    # Process user input
-    user_input_cleaned = re.sub(r'[^a-zA-Z ]', '', user_input).strip().lower()
+   # Process user input and clean it
+user_input_cleaned = re.sub(r'[^a-zA-Z ]', '', user_input).strip().lower()
+# If the query contains "this disease", override with the last predicted disease
+if "this disease" in user_input.lower() or "this" in user_input.lower():
+    user_input_cleaned = st.session_state.last_disease or ""
+
+# Check if the user is asking for precautions
+if any(keyword in user_input.lower() for keyword in precaution_keywords):
+    disease_asked = user_input_cleaned.lower()
+
+    # If the query indicates "this disease", use last predicted disease
     if "this disease" in user_input.lower() or "this" in user_input.lower():
-        user_input_cleaned = st.session_state.last_disease or ""
-
-    # Check if user asks for **precautions**
-    if any(keyword in user_input.lower() for keyword in precaution_keywords):
-        disease_asked = user_input_cleaned.lower()
-
-        if "this disease" in user_input.lower() or "this" in user_input.lower():
-            disease_asked = st.session_state.last_disease.lower() if st.session_state.last_disease else ""
-
-        found = False
-        for _, row in df.iterrows():
-            disease = row['Disease'].lower()
-            if disease in disease_asked:
-                found = True
-                precautions = row.get('Precautions', 'No precautions found').split(';')  
-                response = f"**🛡️ Precautions for {row['Disease'].capitalize()}:**\n" + "\n".join([f"✅ {p.strip()}" for p in precautions])
-                break
-        
-        if not found:
-            response = "⚠️ Disease not found in database. Please check the name and try again."
-
-
-
-    # If user enters new input, clear previous charts
-    if "user_input" in st.session_state and user_input.strip() != st.session_state.user_input:
-        st.session_state.show_severity_chart = False
-        st.session_state.show_matched_chart = False
-
-    st.session_state.user_input = user_input.strip()  # Store latest input
+        disease_asked = st.session_state.last_disease.lower() if st.session_state.last_disease else ""
     
-    
-    # Check if user asks for **symptoms**
-    if any(keyword in user_input.lower() for keyword in symptom_keywords):
-        disease_asked = user_input_cleaned.lower()
+    found = False
+    for _, row in df.iterrows():
+        disease = row['Disease'].lower()
+        # Use equality or substring matching to avoid false triggers from symptom queries
+        if disease == disease_asked or disease in disease_asked:
+            found = True
+            precautions = row.get('Precautions', 'No precautions found').split(';')
+            response = f"**🛡️ Precautions for {row['Disease'].capitalize()}:**\n" + "\n".join([f"✅ {p.strip()}" for p in precautions])
+            break
 
-        found = False
-        for _, row in df.iterrows():
-            disease = row['Disease'].lower()
-            if disease in disease_asked:
-                found = True
-                symptoms = row.get('Symptoms', 'No symptoms found').split(',')
-                response = f"**🤒 Symptoms of {row['Disease'].capitalize()}:**\n" + "\n".join([f"🔹 {s.strip()}" for s in symptoms])
+    if not found:
+        response = "⚠️ Disease not found in database. Please check the name and try again."
 
-                # Store symptoms for severity chart
-                st.session_state.user_symptoms = [s.strip().lower() for s in symptoms]
-                st.session_state.show_severity_chart = True  # Enable severity chart automatically
-                break
+# Use 'elif' for symptom queries so that only one branch is executed:
+elif any(keyword in user_input.lower() for keyword in symptom_keywords):
+    disease_asked = user_input_cleaned.lower()
+    found = False
+    for _, row in df.iterrows():
+        disease = row['Disease'].lower()
+        if disease in disease_asked:
+            found = True
+            symptoms = row.get('Symptoms', 'No symptoms found').split(',')
+            response = f"**🤒 Symptoms of {row['Disease'].capitalize()}:**\n" + "\n".join([f"🔹 {s.strip()}" for s in symptoms])
+            # Store symptoms for later visualization
+            st.session_state.user_symptoms = [s.strip().lower() for s in symptoms]
+            st.session_state.show_severity_chart = True
+            break
 
-        if not found:
-            response = "⚠️ Disease not found in database. Please check the name and try again."
+    if not found:
+        response = "⚠️ Disease not found in database. Please check the name and try again."
+
         
     # **If user enters symptoms, find matching diseases**
     # **If user enters symptoms, find matching diseases**
