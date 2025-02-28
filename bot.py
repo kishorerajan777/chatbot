@@ -160,21 +160,19 @@ if st.session_state.get("show_severity_chart", False):
 #-----------------------------------------------   BARCHART VISUALS  -----------------------------------------------------------------#
 
 # Show buttons only if symptoms have been processed
-if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
+# Show buttons **only if symptoms have been processed**
+if st.session_state.user_symptoms:
     
-    #📊 Button to Show Symptom Severity Chart
-    if st.button("📊 See Symptom Severity Chart", key="severity_chart_btn"):
-
-        # Toggle the session state variable
-        st.session_state.show_severity_chart = not st.session_state.get("show_severity_chart", False)
+    #📊 Toggle Button to Show/Hide Symptom Severity Chart
+    if st.button("📊 See Symptom Severity Chart"):
+        st.session_state.show_severity_chart = not st.session_state.show_severity_chart
 
     # 📊 Symptom Severity Chart Display
-    if st.session_state.get("show_severity_chart", False) and "user_symptoms" in st.session_state:
+    if st.session_state.show_severity_chart:
         st.markdown("### **📊 Symptom Severity Visualization**")
 
         matched_symptoms = [s.lower().strip() for s in st.session_state.user_symptoms]
         filtered_df = df_exploded[df_exploded["Symptoms"].isin(matched_symptoms)]
-
         severity_df = filtered_df.groupby("Symptoms", as_index=False)["Severity_Level"].max()
 
         if not severity_df.empty:
@@ -191,21 +189,17 @@ if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
         else:
             st.warning("⚠️ No severity data found for the entered symptoms.")
 
-    # 📊 Button to Show Matched Symptoms Count for Top 3 Diseases
-    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases", key="matched_chart_btn"):
+    # 📊 Toggle Button to Show/Hide Matched Symptom Counts for Top 3 Diseases
+    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases"):
+        st.session_state.show_matched_chart = not st.session_state.show_matched_chart
 
-
-        # Toggle the session state variable
-        st.session_state.show_matched_chart = not st.session_state.get("show_matched_chart", False)
-
-    # 📊 Matched Symptoms Count Bar Chart Displays
-    if st.session_state.get("show_matched_chart", False):  
+    # 📊 Matched Symptoms Count Bar Chart Display
+    if st.session_state.show_matched_chart:
         st.markdown("### **📊 Matched Symptom Counts for Top 3 Predicted Diseases**")
 
-        if "disease_matches" in st.session_state:
+        if st.session_state.disease_matches:
             disease_matches_df = pd.DataFrame(st.session_state.disease_matches)
 
-            # Extract data for chart
             disease_names = disease_matches_df["Disease"].str.capitalize().tolist()
             match_counts = disease_matches_df["MatchCount"].tolist()
 
@@ -224,5 +218,6 @@ if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
             else:
                 st.warning("⚠️ No matched symptoms found.")
         else:
-            st.warning("⚠️ No stored data for matched symptoms. Please enter symptoms first.")  
+            st.warning("⚠️ No stored data for matched symptoms. Please enter symptoms first.")
+
 #-------------------------------------------------------------------------------------------------------------------------------------#
