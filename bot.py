@@ -154,17 +154,16 @@ if user_input:
 
 #-----------------------------------------------   BARCHART VISUALS  -----------------------------------------------------------------#
 
+#-----------------------------------------------   BARCHART VISUALS  -----------------------------------------------------------------#
+
 # Show buttons only if symptoms have been processed
 if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
     
-    #📊 Button to Show Symptom Severity Chartss
+    #📊 Button to Show Symptom Severity Chart
     if st.button("📊 See Symptom Severity Chart"):
+        # Toggle the session state variable
         st.session_state.show_severity_chart = not st.session_state.get("show_severity_chart", False)
 
-    # 📊 Button to Show Matched Symptoms Count for Top 3 Diseases
-    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases"):
-        st.session_state.show_matched_chart = not st.session_state.get("show_matched_chart", False)
-       
     # 📊 Symptom Severity Chart Display
     if st.session_state.get("show_severity_chart", False) and "user_symptoms" in st.session_state:
         st.markdown("### **📊 Symptom Severity Visualization**")
@@ -187,6 +186,11 @@ if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
             st.plotly_chart(fig2, use_container_width=True)
         else:
             st.warning("⚠️ No severity data found for the entered symptoms.")
+
+    # 📊 Button to Show Matched Symptoms Count for Top 3 Diseases
+    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases"):
+        # Toggle the session state variable
+        st.session_state.show_matched_chart = not st.session_state.get("show_matched_chart", False)
 
     # 📊 Matched Symptoms Count Bar Chart Displays
     if st.session_state.get("show_matched_chart", False):  
@@ -215,6 +219,5 @@ if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
                 st.warning("⚠️ No matched symptoms found.")
         else:
             st.warning("⚠️ No stored data for matched symptoms. Please enter symptoms first.")
-
 
 #-------------------------------------------------------------------------------------------------------------------------------------#
