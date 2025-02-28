@@ -192,7 +192,7 @@ if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
             st.warning("⚠️ No severity data found for the entered symptoms.")
 
     # 📊 Button to Show Matched Symptoms Count for Top 3 Diseases
-   if st.button("📊 See Matched Symptom Counts for Top 3 Diseases"):
+    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases"):
 
         # Toggle the session state variable
         st.session_state.show_matched_chart = not st.session_state.get("show_matched_chart", False)
