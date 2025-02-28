@@ -4,6 +4,35 @@ import re
 import time
 import plotly.express as px  
 
+# 1. Inject custom CSS for chat messages
+st.markdown("""
+<style>
+/* Assistant messages: light-blue background, aligned left */
+[data-testid="stChatMessage"][data-role="assistant"] div[data-testid="stMarkdownContainer"] {
+    background-color: #E8F4FF; /* Light blue */
+    color: #000;
+    border-radius: 5px;
+    margin-left: 0;
+    width: 70%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* User messages: gray background, aligned right */
+[data-testid="stChatMessage"][data-role="user"] div[data-testid="stMarkdownContainer"] {
+    background-color: #F0F0F0; /* Light gray */
+    color: #000;
+    border-radius: 5px;
+    margin-left: auto;
+    margin-right: 0;
+    width: 70%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 # Load dataset
 file_path ="Diseases.csv"
 df = pd.read_csv(file_path)
@@ -45,55 +74,17 @@ for char in title_text:
     time.sleep(0.05)
 
 # Display chat history
-# Display chat history
 for message in st.session_state.messages:
-    if message["role"] == "user":
-        # Keep the user logo and customize the text bubble
-        with st.chat_message("user"):
-            st.markdown(
-                f"""
-                <div style="
-                    background-color: #FFA500;  /* Orange background */
-                    color: white;               /* White text */
-                    padding: 10px;
-                    border-radius: 10px;
-                    margin: 0;                 /* Remove default margin */
-                    width: fit-content;        /* Fit content width */
-                ">
-                    {message["content"]}
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-    else:
-        # Default styling for assistant messages
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
 # User Input
 user_input = st.chat_input("Enter symptoms or ask about precautions/symptoms/effects...")
 
 if user_input:
-    # Keep the user logo and customize the text bubble
     with st.chat_message("user"):
-        st.markdown(
-            f"""
-            <div style="
-                background-color: #FFA500;  /* Orange background */
-                color: white;               /* White text */
-                padding: 10px;
-                border-radius: 10px;
-                margin: 0;                 /* Remove default margin */
-                width: fit-content;        /* Fit content width */
-            ">
-                {user_input}
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        st.markdown(user_input)
     st.session_state.messages.append({"role": "user", "content": user_input})
-
-    # Rest of your chatbot logic...
 
     response = ""  
 
