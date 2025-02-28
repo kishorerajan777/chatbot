@@ -159,46 +159,22 @@ if st.session_state.get("show_severity_chart", False):
 
 #-----------------------------------------------   BARCHART VISUALS  -----------------------------------------------------------------#
 
-# Show buttons only if Top 3 disease predictions are available
-if "disease_matches" in st.session_state and st.session_state.disease_matches:
+# Show buttons only if symptoms have been processed
+if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
     
-    # 📊 Button to Show Matched Symptom Counts for Top 3 Diseases
-    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases", key="matched_chart_btn"):
-        st.session_state.show_matched_chart = not st.session_state.get("show_matched_chart", False)
-
-    # 📊 Matched Symptoms Count Bar Chart Display
-    if st.session_state.get("show_matched_chart", False):
-        st.markdown("### **📊 Matched Symptom Counts for Top 3 Predicted Diseases**")
-
-        disease_matches_df = pd.DataFrame(st.session_state.disease_matches)
-        disease_names = disease_matches_df["Disease"].str.capitalize().tolist()
-        match_counts = disease_matches_df["MatchCount"].tolist()
-
-        if disease_names:
-            fig3 = px.bar(
-                x=disease_names,
-                y=match_counts,
-                text=match_counts,
-                labels={"x": "Disease", "y": "Matched Symptom Count"},
-                title="🔍 Matched Symptoms for Top 3 Predicted Diseases",
-                color=match_counts,
-                color_continuous_scale="portland",
-            )
-            fig3.update_traces(textposition="outside")
-            st.plotly_chart(fig3, use_container_width=True)
-        else:
-            st.warning("⚠️ No matched symptoms found.")
-
-    # 📊 Button to Show Symptom Severity Chart (Now appears only after Top 3 diseases are found)
+    #📊 Button to Show Symptom Severity Chart
     if st.button("📊 See Symptom Severity Chart", key="severity_chart_btn"):
+
+        # Toggle the session state variable
         st.session_state.show_severity_chart = not st.session_state.get("show_severity_chart", False)
 
     # 📊 Symptom Severity Chart Display
-    if st.session_state.get("show_severity_chart", False):
+    if st.session_state.get("show_severity_chart", False) and "user_symptoms" in st.session_state:
         st.markdown("### **📊 Symptom Severity Visualization**")
-        
+
         matched_symptoms = [s.lower().strip() for s in st.session_state.user_symptoms]
         filtered_df = df_exploded[df_exploded["Symptoms"].isin(matched_symptoms)]
+
         severity_df = filtered_df.groupby("Symptoms", as_index=False)["Severity_Level"].max()
 
         if not severity_df.empty:
@@ -215,5 +191,38 @@ if "disease_matches" in st.session_state and st.session_state.disease_matches:
         else:
             st.warning("⚠️ No severity data found for the entered symptoms.")
 
+    # 📊 Button to Show Matched Symptoms Count for Top 3 Diseases
+    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases", key="matched_chart_btn"):
 
+
+        # Toggle the session state variable
+        st.session_state.show_matched_chart = not st.session_state.get("show_matched_chart", False)
+
+    # 📊 Matched Symptoms Count Bar Chart Displays
+    if st.session_state.get("show_matched_chart", False):  
+        st.markdown("### **📊 Matched Symptom Counts for Top 3 Predicted Diseases**")
+
+        if "disease_matches" in st.session_state:
+            disease_matches_df = pd.DataFrame(st.session_state.disease_matches)
+
+            # Extract data for chart
+            disease_names = disease_matches_df["Disease"].str.capitalize().tolist()
+            match_counts = disease_matches_df["MatchCount"].tolist()
+
+            if disease_names:
+                fig3 = px.bar(
+                    x=disease_names,
+                    y=match_counts,
+                    text=match_counts,
+                    labels={"x": "Disease", "y": "Matched Symptom Count"},
+                    title="🔍 Matched Symptoms for Top 3 Predicted Diseases",
+                    color=match_counts,
+                    color_continuous_scale="portland",
+                )
+                fig3.update_traces(textposition="outside")
+                st.plotly_chart(fig3, use_container_width=True)
+            else:
+                st.warning("⚠️ No matched symptoms found.")
+        else:
+            st.warning("⚠️ No stored data for matched symptoms. Please enter symptoms first.")  now give after apper that servrity btn
 #-------------------------------------------------------------------------------------------------------------------------------------#
