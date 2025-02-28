@@ -4,34 +4,14 @@ import re
 import time
 import plotly.express as px  
 
-# 1. Inject custom CSS for chat messages
+# Inject custom CSS for headings
 st.markdown("""
 <style>
-/* Assistant messages: light-blue background, aligned left */
-[data-testid="stChatMessage"][data-role="assistant"] div[data-testid="stMarkdownContainer"] {
-    background-color: #E8F4FF; /* Light blue */
-    color: #000;
-    border-radius: 5px;
-    margin-left: 0;
-    width: 70%;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-/* User messages: gray background, aligned right */
-[data-testid="stChatMessage"][data-role="user"] div[data-testid="stMarkdownContainer"] {
-    background-color: #F0F0F0; /* Light gray */
-    color: #000;
-    border-radius: 5px;
-    margin-left: auto;
-    margin-right: 0;
-    width: 70%;
-    padding: 10px;
-    margin-bottom: 10px;
+h1 {
+    color: orange;
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 # Load dataset
 file_path ="Diseases.csv"
