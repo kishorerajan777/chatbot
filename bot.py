@@ -5,7 +5,7 @@ import time
 import plotly.express as px  
 
 # Load dataset
-file_path = "Diseases.csv"
+file_path ="Diseases.csv"
 df = pd.read_csv(file_path)
 
 # Ensure required columns exist
@@ -29,20 +29,20 @@ df_exploded["Symptom_Severity"] = df_exploded["Symptom_Severity"].astype(str)
 df_exploded["Severity_Level"] = pd.to_numeric(df_exploded["Symptom_Severity"].str.extract(r'(\d+)')[0], errors="coerce")
 
 # Initialize session state variables
-session_keys = [
-    "messages", "last_disease", "show_chart", "disease_names",
-    "match_counts", "user_symptoms", "show_severity_chart", "show_matched_chart"
-]
+session_keys = ["messages", "last_disease", "show_chart", "disease_names", "match_counts", "user_symptoms"]
 for key in session_keys:
     if key not in st.session_state:
         st.session_state[key] = [] if key in ["messages", "disease_names", "match_counts", "user_symptoms"] else None
 
-# Chatbot Title (Fixed)
-if "chatbot_heading" not in st.session_state:
-    st.session_state.chatbot_heading = "🩺 Hi, I am Medtech Chatbot"
-
+# Chatbot Title with Typewriter Effect
 title_placeholder = st.empty()
-title_placeholder.markdown(f"<h1 style='color:#FF4500;'>{st.session_state.chatbot_heading}</h1>", unsafe_allow_html=True)
+title_text = "🩺 Hi, I am Medtech Chatbot"
+display_text = ""
+
+for char in title_text:
+    display_text += char  
+    title_placeholder.title(display_text)
+    time.sleep(0.05)
 
 # Display chat history
 for message in st.session_state.messages:
@@ -57,7 +57,7 @@ if user_input:
         st.markdown(user_input)
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    response = ""
+    response = ""  
 
     # Keywords for different queries
     precaution_keywords = ["precaution", "how to prevent", "prevent", "safety", "what should i do"]
@@ -108,6 +108,11 @@ if user_input:
         if not found:
             response = "⚠️ Disease not found in database. Please check the name and try again."
         
+    # **If user enters symptoms, find matching diseases**
+
+
+
+    # **If user enters symptoms, find matching diseases**w
     else:
         user_symptoms = set(re.findall(r'\w+', user_input.lower()))
         df["MatchCount"] = df["Symptoms"].apply(lambda x: len(set(re.findall(r'\w+', x)).intersection(user_symptoms)))
@@ -115,64 +120,58 @@ if user_input:
 
         if not disease_matches.empty:
             response += "🦠 **Top 3 Possible Diseases:**\n\n"
-            st.session_state.user_symptoms = list(user_symptoms)  
-            st.session_state.disease_matches = disease_matches.to_dict("records")  
+            st.session_state.user_symptoms = list(user_symptoms)  # Store for severity chart
+            st.session_state.disease_matches = disease_matches.to_dict("records")  # Store matches for chart
 
             for _, row in disease_matches.iterrows():
                 response += f"\n🔹 **{row['Disease'].capitalize()}**\n\n"
                 response += f"\n📖 **Description:** {row.get('Description', 'No description available')}\n\n"
+                response += "\n🤒 **Symptoms:**\n\n"
+                # Display each symptom on a new line
+                for symptom in row["Symptoms"].split(","):
+                    response += f"🔹 {symptom.strip()}\n\n"
+                # Display matched symptoms count on a new line
+                response += f"\n\n🔹 **Matched Symptoms Count:**\n{row['MatchCount']}\n"
+                response += "\n\n"  # Add a new line for spacing
 
             st.session_state.show_chart = True  
         else:
             response = "⚠️ No matching disease found. Please check the symptoms or try rephrasing."
 
-    # Display chatbot response with typing effect
+    
+        # Display chatbot response with typing effect
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             time.sleep(2)
             placeholder = st.empty()
-            placeholder.markdown(response)
+            typed_text = ""
+            for word in response.split():
+                typed_text += word + " "
+                placeholder.markdown(typed_text)
+                time.sleep(0.05)
 
     st.session_state.messages.append({"role": "assistant", "content": response})
-
-# 📊 Button to Show Symptom Severity Chart
-if st.button("📊 See Symptom Severity Chart"):
-    st.session_state.show_severity_chart = not st.session_state.get("show_severity_chart", False)
-
-if st.session_state.get("show_severity_chart", False):
-    st.markdown("### **📊 Symptom Severity Visualization**")
-    matched_symptoms = [s.lower().strip() for s in st.session_state.user_symptoms]
-    filtered_df = df_exploded[df_exploded["Symptoms"].isin(matched_symptoms)]
-    severity_df = filtered_df.groupby("Symptoms", as_index=False)["Severity_Level"].max()
-
-    if not severity_df.empty:
-        fig = px.bar(severity_df, x="Symptoms", y="Severity_Level", title="Symptom Severity", color="Severity_Level")
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.warning("⚠️ No severity data found.")
-
-
-
-    st.session_state.messages.append({"role": "assistant", "content": response})
-
-#-----------------------------------------------   BARCHART VISUALS  -----------------------------------------------------------------#
 
 #-----------------------------------------------   BARCHART VISUALS  -----------------------------------------------------------------#
 
 # Show buttons only if symptoms have been processed
-# Show buttons **only if symptoms have been processed**
-if st.session_state.user_symptoms:
+if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
     
-    #📊 Toggle Button to Show/Hide Symptom Severity Chart
+    #📊 Button to Show Symptom Severity Chartss
     if st.button("📊 See Symptom Severity Chart"):
-        st.session_state.show_severity_chart = not st.session_state.show_severity_chart
+        st.session_state.show_severity_chart = not st.session_state.get("show_severity_chart", False)
 
+    # 📊 Button to Show Matched Symptoms Count for Top 3 Diseases
+    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases"):
+        st.session_state.show_matched_chart = not st.session_state.get("show_matched_chart", False)
+       
     # 📊 Symptom Severity Chart Display
-    if st.session_state.show_severity_chart:
+    if st.session_state.get("show_severity_chart", False) and "user_symptoms" in st.session_state:
         st.markdown("### **📊 Symptom Severity Visualization**")
 
         matched_symptoms = [s.lower().strip() for s in st.session_state.user_symptoms]
         filtered_df = df_exploded[df_exploded["Symptoms"].isin(matched_symptoms)]
+
         severity_df = filtered_df.groupby("Symptoms", as_index=False)["Severity_Level"].max()
 
         if not severity_df.empty:
@@ -189,17 +188,14 @@ if st.session_state.user_symptoms:
         else:
             st.warning("⚠️ No severity data found for the entered symptoms.")
 
-    # 📊 Toggle Button to Show/Hide Matched Symptom Counts for Top 3 Diseases
-    if st.button("📊 See Matched Symptom Counts for Top 3 Diseases"):
-        st.session_state.show_matched_chart = not st.session_state.show_matched_chart
-
-    # 📊 Matched Symptoms Count Bar Chart Display
-    if st.session_state.show_matched_chart:
+    # 📊 Matched Symptoms Count Bar Chart Displays
+    if st.session_state.get("show_matched_chart", False):  
         st.markdown("### **📊 Matched Symptom Counts for Top 3 Predicted Diseases**")
 
-        if st.session_state.disease_matches:
+        if "disease_matches" in st.session_state:
             disease_matches_df = pd.DataFrame(st.session_state.disease_matches)
 
+            # Extract data for chart
             disease_names = disease_matches_df["Disease"].str.capitalize().tolist()
             match_counts = disease_matches_df["MatchCount"].tolist()
 
@@ -219,5 +215,6 @@ if st.session_state.user_symptoms:
                 st.warning("⚠️ No matched symptoms found.")
         else:
             st.warning("⚠️ No stored data for matched symptoms. Please enter symptoms first.")
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------#
