@@ -56,7 +56,8 @@ for char in title_text:
 # Display chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+        st.markdown("<h1 style='color: orange;'>🩺 Hi, I am Medtech Chatbot</h1>", unsafe_allow_html=True)
+
 
 # User Input
 user_input = st.chat_input("Enter symptoms or ask about precautions/symptoms/effects...")
