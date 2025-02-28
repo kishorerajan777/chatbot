@@ -4,15 +4,6 @@ import re
 import time
 import plotly.express as px  
 
-# Inject custom CSS for headings
-st.markdown("""
-<style>
-h1 {
-    color: orange;
-}
-</style>
-""", unsafe_allow_html=True)
-
 # Load dataset
 file_path ="Diseases.csv"
 df = pd.read_csv(file_path)
