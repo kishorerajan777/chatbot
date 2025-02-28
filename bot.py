@@ -224,5 +224,5 @@ if "user_symptoms" in st.session_state and st.session_state.user_symptoms:
             else:
                 st.warning("⚠️ No matched symptoms found.")
         else:
-            st.warning("⚠️ No stored data for matched symptoms. Please enter symptoms first.")  now give after apper that servrity btn
+            st.warning("⚠️ No stored data for matched symptoms. Please enter symptoms first.")  
 #-------------------------------------------------------------------------------------------------------------------------------------#
