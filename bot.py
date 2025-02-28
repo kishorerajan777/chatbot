@@ -57,7 +57,8 @@ for message in st.session_state.messages:
                     color: white;               /* White text */
                     padding: 10px;
                     border-radius: 10px;
-                    margin: 5px 0;
+                    margin: 0;                 /* Remove default margin */
+                    width: fit-content;        /* Fit content width */
                 ">
                     {message["content"]}
                 </div>
@@ -82,7 +83,8 @@ if user_input:
                 color: white;               /* White text */
                 padding: 10px;
                 border-radius: 10px;
-                margin: 5px 0;
+                margin: 0;                 /* Remove default margin */
+                width: fit-content;        /* Fit content width */
             ">
                 {user_input}
             </div>
