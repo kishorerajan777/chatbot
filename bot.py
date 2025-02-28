@@ -45,17 +45,51 @@ for char in title_text:
     time.sleep(0.05)
 
 # Display chat history
+# Display chat history
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if message["role"] == "user":
+        # Custom HTML and CSS for user messages (orange color)
+        st.markdown(
+            f"""
+            <div style="
+                background-color: #FFA500;  /* Orange background */
+                color: white;               /* White text */
+                padding: 10px;
+                border-radius: 10px;
+                margin: 5px 0;
+            ">
+                {message["content"]}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        # Default styling for assistant messages
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
 # User Input
 user_input = st.chat_input("Enter symptoms or ask about precautions/symptoms/effects...")
 
 if user_input:
-    with st.chat_message("user"):
-        st.markdown(user_input)
+    # Custom HTML and CSS for user messages (orange color)
+    st.markdown(
+        f"""
+        <div style="
+            background-color: #FFA500;  /* Orange background */
+            color: white;               /* White text */
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+        ">
+            {user_input}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.session_state.messages.append({"role": "user", "content": user_input})
+
+    # Rest of your chatbot logic...
 
     response = ""  
 
