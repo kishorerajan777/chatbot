@@ -41,7 +41,7 @@ display_text = ""
 
 for char in title_text:
     display_text += char  
-    title_placeholder.markdown(f"<h1 style='color:#FF7F7F;'>{display_text}</h1>", unsafe_allow_html=True)
+    title_placeholder.markdown(f"<h1 style='color:FF6347;'>{display_text}</h1>", unsafe_allow_html=True)
     time.sleep(0.05)
 
 # Display chat history
